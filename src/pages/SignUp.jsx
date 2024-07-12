@@ -3,6 +3,12 @@ import { IoMdEyeOff } from "react-icons/io";
 import { IoMdEye } from "react-icons/io";
 import { Link } from "react-router-dom";
 import OAuth from "../components/OAuth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { auth } from "../firebaseConfig";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { db } from "../firebaseConfig";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -12,10 +18,45 @@ const SignUp = () => {
     password: "",
   });
 
+  const navigate = useNavigate();
   const { name, email, password } = formData;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const signup = async (e) => {
+    e.preventDefault();
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      updateProfile(auth.currentUser, {
+        displayName: name,
+      });
+
+      const user = userCredential.user;
+      // console.log("user successfully signup: ", user);
+      const formDataCopy = { ...formData };
+      // we don't want store the password in the firestore so we delete it.
+      delete formDataCopy.password;
+      // Add timestamp to the formData
+      formDataCopy.timestamp = serverTimestamp();
+
+      // Send user data to Firestore
+      await setDoc(doc(db, "users", user.uid), formDataCopy);
+
+      toast.success("Account created successfully");
+      
+      // navigate to the home page
+      navigate("/");
+    } catch (error) {
+      toast.error("Something went wrong with the registration");
+    }
   };
 
   return (
@@ -32,7 +73,7 @@ const SignUp = () => {
         </div>
 
         <div className="w-full md:w-[67%] lg:w-[40%] lg:ml-20">
-          <form>
+          <form onSubmit={signup}>
             <input
               type="text"
               name="name"
