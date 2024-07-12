@@ -51,7 +51,7 @@ const SignUp = () => {
       await setDoc(doc(db, "users", user.uid), formDataCopy);
 
       toast.success("Account created successfully");
-      
+
       // navigate to the home page
       navigate("/");
     } catch (error) {
@@ -102,16 +102,16 @@ const SignUp = () => {
               />
 
               {showPassword ? (
-                <IoMdEye
-                  size={24}
-                  className="absolute right-3 top-3 text-gray-600"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                />
-              ) : (
                 <IoMdEyeOff
                   size={24}
                   className="absolute right-3 top-3 text-gray-600"
-                  onClick={() => setShowPassword((prev) => !prev)}
+                  onClick={() => setShowPassword(false)}
+                />
+              ) : (
+                <IoMdEye
+                  size={24}
+                  className="absolute right-3 top-3 text-gray-600"
+                  onClick={() => setShowPassword(true)}
                 />
               )}
             </div>
