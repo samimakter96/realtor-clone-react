@@ -25,7 +25,7 @@ const SignUp = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const signup = async (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
 
     try {
@@ -73,7 +73,7 @@ const SignUp = () => {
         </div>
 
         <div className="w-full md:w-[67%] lg:w-[40%] lg:ml-20">
-          <form onSubmit={signup}>
+          <form onSubmit={handleSignup}>
             <input
               type="text"
               name="name"
